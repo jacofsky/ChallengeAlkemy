@@ -5,14 +5,14 @@ import fieldValidation from "../middlewares/fieldValidation.js";
 
 const route = Router()
 
-route.post('/login', [
+route.post('/register', [
     check('name').isString('El nombre es requerido'),
     check('password').isString('La contraseña es requerida'),
     check('rpassword').isString('Repita la contraseña'),
     fieldValidation
 ], login)
 
-route.post('/register', [
+route.post('/login', [
     check('name').isString('El nombre es requerido'),
     check('password').isString('La contraseña es requerida'),
     fieldValidation

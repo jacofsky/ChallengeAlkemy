@@ -2,9 +2,10 @@ import { request, response } from "express";
 import jwt from "jsonwebtoken";
 
 
-const tokenValidation = (req = request, res =  response, next) => {
+const tokenValidation = (req = request, res = response, next) => {
 
-    const token = res.header('x-token')
+    const token = req.get('x-token')
+    console.log(token);
 
     if (!token) {
         return res.status(400).json({
@@ -13,7 +14,7 @@ const tokenValidation = (req = request, res =  response, next) => {
     }
 
     try {
-        const {valid} = jwt.verify(token, process.env.JWT_SECRET_KEY)
+        const { valid } = jwt.verify(token, process.env.JWT_SECRET_KEY)
 
         if (!valid) {
             return res.status(401).json({
@@ -25,7 +26,7 @@ const tokenValidation = (req = request, res =  response, next) => {
             msg: 'Token invalido'
         })
     }
-    
+
 
     next()
 }

@@ -8,7 +8,7 @@ const route = Router()
 
 route.get('/', getMovies)
 
-route.get('/:id',[
+route.get('/:id', [
     check('id', 'El id no es valido').isNumeric(),
     fieldValidation
 ], getMoviesId)
@@ -19,7 +19,7 @@ route.put('/:id', [
     check('id', 'El id no es valido').isNumeric(),
     check('imagen', 'Es necesaria una imagen').isString(),
     check('titulo', 'Es necesario un nombre').isString(),
-    check('fecha', 'Es necesaria una fecha').isDate(),
+    check('fecha', 'Es necesaria una fecha').isString(),
     check('calificacion', 'Es necesaria una calificacion').isNumeric(),
     fieldValidation
 ], updatePelicula)
@@ -34,7 +34,7 @@ route.post('/', [
     tokenValidation,
     check('imagen', 'Es necesaria una imagen').isString(),
     check('titulo', 'Es necesario un titulo').isString(),
-    check('fecha', 'Es necesaria una fecha').isNumeric(),
+    check('fecha', 'Es necesaria una fecha').isString(),
     check('calificacion', 'Es necesaria una calificacion').isNumeric(),
     fieldValidation
 ], postMovie)

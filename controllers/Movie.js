@@ -1,19 +1,17 @@
 import { getCharactersByMovieTitle } from "../services/CharactersServices.js"
 import { createMovie, deleteMovieById, findMovieById, getAllMovies, getAllMoviesASC, getAllMoviesDESC, getMovieById, updateMovieById } from "../services/MovieServices.js"
 
-export const getMovies = async(req = request, res = response) => {
-    
-
-    if ('asc' = req.query.orden) {
+export const getMovies = async (req = request, res = response) => {
+    if ('asc' === req.query.orden) {
 
         const data = await getAllMoviesASC()
-        
+
         return res.status(200).json({
             data
         })
     }
 
-    if ('desc' = req.query.orden) {
+    if ('desc' === req.query.orden) {
 
         const data = await getAllMoviesDESC()
 
@@ -40,9 +38,9 @@ export const getMovies = async(req = request, res = response) => {
 
 }
 
-export const getMoviesId = async(req = request, res = response) => {
+export const getMoviesId = async (req = request, res = response) => {
 
-    const {id} = req.params
+    const { id } = req.params
 
     const data = await getMovieById(id)
 
@@ -52,28 +50,33 @@ export const getMoviesId = async(req = request, res = response) => {
 
 }
 
-export const updatePelicula = async(req = request, res = response) => {
+export const updatePelicula = async (req = request, res = response) => {
 
-    const {imagen, titulo, fecha, calificacion} = req.body
-    const {id} = req.params
+    const { imagen, titulo, fecha, calificacion } = req.body
+    const { id } = req.params
 
     const isUpdated = await updateMovieById(id, imagen, titulo, fecha, calificacion)
 
+    let sendData
+
     if (!isUpdated) {
-        return res.status(400).json({
+        sendData = res.status(400).json({
             msg: 'Pelicula no encontrada'
         })
+    } else {
+        sendData = res.status(203).json({
+            msg: 'Pelicula actualizada'
+        })
+
     }
 
-    res.status(203).json({
-        msg: 'Pelicula actualizada'
-    })
+    return sendData
 
 }
 
-export const deleteMovie = async(req = request, res = response) => {
+export const deleteMovie = async (req = request, res = response) => {
 
-    const {id} = req.params
+    const { id } = req.params
 
     const isDeleted = await deleteMovieById(id)
 
@@ -88,19 +91,25 @@ export const deleteMovie = async(req = request, res = response) => {
     })
 }
 
-export const postMovie = async(req = request, res = response) => {
+export const postMovie = async (req = request, res = response) => {
 
-    const {imagen, titulo, fecha, calificacion} = req.body
+    const { imagen, titulo, fecha, calificacion } = req.body
 
     const isCreated = await createMovie(imagen, titulo, fecha, calificacion)
 
+    let resSend
+
     if (!isCreated) {
-        return res.status(400).json({
+        resSend = res.status(400).json({
             msg: 'Pelicula no creada'
         })
+    } else {
+        resSend = res.status(203).json({
+            msg: 'Personaje creada'
+        })
+
     }
 
-    res.status(203).json({
-        msg: 'Personaje creada'
-    })
+    return resSend
+
 }

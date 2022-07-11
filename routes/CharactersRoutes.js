@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { check } from "express-validator";
-import { deleteCharacter, getCharactersId, postCharacter, getCharacters } from "../controllers/Characters.js";
+import { deleteCharacter, getCharactersId, postCharacter, getCharacters, updateCharacter } from "../controllers/Characters.js";
 import fieldValidation from "../middlewares/fieldValidation.js";
 import tokenValidation from "../middlewares/tokenValidation.js";
 
@@ -8,7 +8,7 @@ const route = Router()
 
 route.get('/', getCharacters)
 
-route.get('/:id',[
+route.get('/:id', [
     check('id', 'El id no es valido').isNumeric(),
     fieldValidation
 ], getCharactersId)
@@ -23,7 +23,7 @@ route.put('/:id', [
     check('peso', 'Es necesario una peso').isNumeric(),
     check('historia', 'Es necesaria una historia').isString(),
     fieldValidation
-], getCharactersId)
+], updateCharacter)
 
 route.delete('/:id', [
     tokenValidation,

@@ -1,51 +1,55 @@
 import { request, response } from "express";
-import { createCharacter, deleteCharacterById, getCharactersByEdad, getCharactersById, getCharactersByMovieTitle, getCharactersByName, updateCharacterById } from "../services/CharactersServices";
-import { findMovieById } from "../services/MovieServices";
+import { createCharacter, deleteCharacterById, getCharactersByEdad, getCharactersById, getCharactersByMovieTitle, getCharactersByName, updateCharacterById, getCharactersInService } from "../services/CharactersServices.js";
+import { findMovieById } from "../services/MovieServices.js";
 
-export const getCharacters = async(req = request, res = response) => {
-    
+export const getCharacters = async (req = request, res = response) => {
+    try {
+        if (Object.keys(req.query).length > 0) {
+            if (req.query.nombre) {
+                const nombre = req.query.nombre
 
-    if (req.query.nombre) {
-        const nombre = req.query.nombre
+                const data = await getCharactersByName(nombre)
 
-        const data = await getCharactersByName(nombre)
-        
-        return res.status(200).json({
-            data
+                return res.status(200).json({
+                    data
+                })
+            }
+
+            if (req.query.edad) {
+                const edad = req.query.edad
+
+                const data = await getCharactersByEdad(edad)
+
+                return res.status(200).json({
+                    data
+                })
+            }
+
+            if (req.query.movietitle) {
+                const movietitle = req.query.movietitle
+
+                const data = await getCharactersByMovieTitle(movietitle)
+
+                return res.status(200).json({
+                    data
+                })
+            }
+        } else {
+            const data = await getCharactersInService()
+            return res.status(200).json({
+                data
+            })
+        }
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message
         })
     }
-
-    if (req.query.edad) {
-        const edad = req.query.edad
-
-        const data = await getCharactersByEdad(edad)
-
-        return res.status(200).json({
-            data
-        })
-    }
-
-    if (req.query.movietitle) {
-        const movietitle = req.query.movietitle
-
-        const data = await getCharactersByMovieTitle(movietitle)
-
-        return res.status(200).json({
-            data
-        })
-    }
-
-    const data = await getCharacters()
-
-    return res.status(200).json({
-        data
-    })
-
 }
 
-export const getCharactersId = async(req = request, res = response) => {
+export const getCharactersId = async (req = request, res = response) => {
 
-    const {id} = req.params
+    const { id } = req.params
 
     const data = await getCharactersById(id)
 
@@ -55,10 +59,11 @@ export const getCharactersId = async(req = request, res = response) => {
 
 }
 
-export const updateCharacter = async(req = request, res = response) => {
+export const updateCharacter = async (req = request, res = response) => {
 
-    const {imagen, nombre, edad, peso, historia} = req.body
-    const {id} = req.params
+    const { imagen, nombre, edad, peso, historia } = req.body
+    const { id } = req.params
+    console.log(id, imagen, nombre, edad, peso, historia);
 
     const isUpdated = await updateCharacterById(id, imagen, nombre, edad, peso, historia)
 
@@ -68,15 +73,15 @@ export const updateCharacter = async(req = request, res = response) => {
         })
     }
 
-    res.status(203).json({
+    res.status(200).json({
         msg: 'Personaje actualizado'
     })
 
 }
 
-export const deleteCharacter = async(req = request, res = response) => {
+export const deleteCharacter = async (req = request, res = response) => {
 
-    const {id} = req.params
+    const { id } = req.params
 
     const isDeleted = await deleteCharacterById(id)
 
@@ -86,19 +91,21 @@ export const deleteCharacter = async(req = request, res = response) => {
         })
     }
 
-    res.status(203).json({
+    res.status(200).json({
         msg: 'Personaje eliminado'
     })
 }
 
-export const postCharacter = async(req = request, res = response) => {
+export const postCharacter = async (req = request, res = response) => {
 
-    const {imagen, nombre, edad, peso, historia, idPelicula} = req.body
+    const { imagen, nombre, edad, peso, historia, idPelicula } = req.body
 
     const peliculaValida = await findMovieById(idPelicula)
 
+    let resSend
+
     if (!peliculaValida) {
-        return res.status(400).json({
+        resSend = res.status(400).json({
             msg: 'Pelicula no encontrada'
         })
     }
@@ -106,12 +113,13 @@ export const postCharacter = async(req = request, res = response) => {
     const isCreated = await createCharacter(imagen, nombre, edad, peso, historia, idPelicula)
 
     if (!isCreated) {
-        return res.status(400).json({
+        resSend = res.status(400).json({
             msg: 'Personaje no creado'
         })
+    } else {
+        resSend = res.status(201).json({
+            msg: 'Personaje creado'
+        })
     }
-
-    res.status(203).json({
-        msg: 'Personaje creado'
-    })
+    return resSend
 }
